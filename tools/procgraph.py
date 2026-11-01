@@ -17,6 +17,7 @@ import re
 import sys
 import tempfile
 import urllib.error
+import urllib.parse
 import urllib.request
 
 # One run, one episode: the marker holds the report of the current run (each cloud run starts clean).
@@ -34,11 +35,11 @@ class GraphError(Exception):
     """A report or request that the client or the graph refused."""
 
 
-def rpc(name, body):
-    """Call one graph RPC through PostgREST.
+def _send(path, body=None):
+    """Send one PostgREST request: a POST with ``body``, or a GET when there is no body.
 
-    :param name: the RPC name, for example ``retrieve_subgraph``.
-    :param body: the JSON arguments of the RPC.
+    :param path: the path after ``/rest/v1/``, for example ``rpc/retrieve_subgraph``.
+    :param body: the JSON body of a POST.
     :returns: the parsed JSON answer.
     :raises GraphError: when the configuration is missing or the call fails.
     """
@@ -48,15 +49,38 @@ def rpc(name, body):
     headers = {"apikey": key, "Content-Type": "application/json"}
     if key.startswith("eyJ"):  # legacy JWT keys go in both headers; the new sb_ keys only in apikey
         headers["Authorization"] = f"Bearer {key}"
-    req = urllib.request.Request(f"{url.rstrip('/')}/rest/v1/rpc/{name}", data=json.dumps(body).encode(),
-                                 headers=headers, method="POST")
+    data = None if body is None else json.dumps(body).encode()
+    req = urllib.request.Request(f"{url.rstrip('/')}/rest/v1/{path}", data=data, headers=headers,
+                                 method="GET" if data is None else "POST")
     try:
         with urllib.request.urlopen(req, timeout=30) as resp:
             return json.loads(resp.read() or b"null")
     except urllib.error.HTTPError as e:
-        raise GraphError(f"HTTP {e.code} from {name}: {e.read().decode('utf-8', 'replace')[:400]}") from e
+        raise GraphError(f"HTTP {e.code} from {path}: {e.read().decode('utf-8', 'replace')[:400]}") from e
     except urllib.error.URLError as e:
         raise GraphError(f"cannot reach the graph: {e.reason}") from e
+
+
+def rpc(name, body):
+    """Call one graph RPC through PostgREST.
+
+    :param name: the RPC name, for example ``retrieve_subgraph``.
+    :param body: the JSON arguments of the RPC.
+    :returns: the parsed JSON answer.
+    :raises GraphError: when the configuration is missing or the call fails.
+    """
+    return _send(f"rpc/{name}", body)
+
+
+def select(table, params):
+    """Read the rows of one table. The publishable key may not read tables; the service key may.
+
+    :param table: the table name, for example ``procedural_edges``.
+    :param params: PostgREST filters, for example ``{"is_active": "eq.true"}``.
+    :returns: the rows.
+    :raises GraphError: when the key may not read the table or the call fails.
+    """
+    return _send(f"{table}?{urllib.parse.urlencode(params)}")
 
 
 def retrieve(domain, k):

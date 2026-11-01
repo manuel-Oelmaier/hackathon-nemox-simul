@@ -89,6 +89,19 @@ class RpcTest(unittest.TestCase):
                 self.assertEqual(request.get_header("Apikey"), key)
                 self.assertEqual(request.has_header("Authorization"), bearer)
 
+    def test_select_reads_a_table_with_a_get(self):
+        """A table read is a GET that carries its filters in the query string, while an RPC stays a POST."""
+        env = {"PGRAPH_SUPABASE_URL": "https://example.supabase.co", "PGRAPH_SUPABASE_KEY": "sb_publishable_example"}
+        with mock.patch.dict(os.environ, env), mock.patch("urllib.request.urlopen") as urlopen:
+            urlopen.return_value.__enter__.return_value.read.return_value = b"[]"
+            self.assertEqual(procgraph.select("episodes", {"select": "agent_id", "domain": "eq.bug_triage"}), [])
+            request = urlopen.call_args.args[0]
+            self.assertEqual(request.get_method(), "GET")
+            self.assertEqual(request.full_url,
+                             "https://example.supabase.co/rest/v1/episodes?select=agent_id&domain=eq.bug_triage")
+            procgraph.rpc("retrieve_subgraph", {})
+            self.assertEqual(urlopen.call_args.args[0].get_method(), "POST")
+
 
 class StopHookTest(unittest.TestCase):
     """The Cursor stop hook."""
