@@ -18,6 +18,10 @@ class AirWeightTests(unittest.TestCase):
         self.assertEqual(result["rate_eur_per_kg"], 1.85)
         self.assertEqual(result["origin"], "FRA")
         self.assertEqual(result["destination"], "ORD")
+        # Rating the same rate on 180 kg actual would bill EUR 333.00.
+        sell_eur = result["chargeable_kg"] * result["rate_eur_per_kg"]
+        self.assertEqual(round(sell_eur, 2), round(701.4 * 1.85, 2))
+        self.assertGreater(sell_eur, 180 * 1.85)
 
     def test_dense_cargo_keeps_actual_weight(self) -> None:
         chargeable, volumetric = chargeable_kg(800, 1.0)
