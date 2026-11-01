@@ -90,6 +90,21 @@ class RpcTest(unittest.TestCase):
                 self.assertEqual(request.has_header("Authorization"), bearer)
 
 
+class StopHookTest(unittest.TestCase):
+    """The Cursor stop hook."""
+
+    def test_asks_once_and_only_when_the_report_is_missing(self):
+        """The hook asks after a finished run without a report, and stays quiet in every other case."""
+        done = {"status": "completed", "loop_count": 0}
+        self.assertIn("followup_message", procgraph.stop_hook_answer(done, reported=False, configured=True))
+        quiet = {"already reported": (done, True, True), "graph not configured": (done, False, False),
+                 "after the follow-up": ({**done, "loop_count": 1}, False, True),
+                 "aborted run": ({**done, "status": "aborted"}, False, True)}
+        for name, (event, reported, configured) in quiet.items():
+            with self.subTest(name):
+                self.assertEqual(procgraph.stop_hook_answer(event, reported, configured), {})
+
+
 class MainTest(unittest.TestCase):
     """The command line."""
 

@@ -189,6 +189,20 @@ def build_report(a, nodes):
             "p_mutation_payload": payload}
 
 
+def stop_hook_answer(event, reported, configured):
+    """Answer Cursor's ``stop`` hook: ask once for the graph report when this run has none.
+
+    :param event: the hook input, with ``status`` and ``loop_count``.
+    :param reported: whether this run already recorded its episode.
+    :param configured: whether the graph secrets are set; sessions without them stay quiet.
+    :returns: the hook output; a ``followup_message`` gives the agent one more turn.
+    """
+    if reported or not configured or event.get("loop_count", 0) > 0 or event.get("status") == "aborted":
+        return {}
+    return {"followup_message": "Before you finish, record this run in the procedural graph with "
+                                "`python3 tools/procgraph.py report ...` (step 5 of the automation prompt)."}
+
+
 def main(argv=None):
     """Run the command line.
 
@@ -215,10 +229,16 @@ def main(argv=None):
                    "--new-node-name", "--new-node-type", "--new-node-desc", "--new-node-params"):
         c.add_argument(option)
     c.add_argument("--dry-run", action="store_true", help="print the RPC body and send nothing")
+    sub.add_parser("stop-hook", help="Cursor stop hook: ask once for the report when this run has none")
     a = p.parse_args(argv)
     try:
         if a.cmd == "retrieve":
             print(format_nodes(retrieve(a.domain, a.k)))
+            return 0
+        if a.cmd == "stop-hook":
+            event = json.loads(sys.stdin.read() or "{}")
+            configured = bool(os.environ.get("PGRAPH_SUPABASE_URL"))
+            print(json.dumps(stop_hook_answer(event, os.path.exists(MARKER), configured)))
             return 0
         if os.path.exists(MARKER) and not a.dry_run:
             raise GraphError(f"this run already recorded its episode ({MARKER}); one run, one episode")
