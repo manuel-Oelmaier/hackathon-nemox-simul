@@ -40,8 +40,8 @@ def rate_air_leg(
 ) -> dict[str, float | str | None]:
     """Rate one air leg on chargeable weight.
 
-    The per-kg sell rate is supplied by the rate sheet. This function only
-    chooses the weight that rate is applied to.
+    The per-kg sell rate is supplied by the rate sheet. The sell amount is
+    that rate times chargeable weight, so loose cargo is not billed on actual kg.
     """
     chargeable, volumetric = chargeable_kg(actual_kg, cbm)
     return {
@@ -50,4 +50,5 @@ def rate_air_leg(
         "chargeable_kg": chargeable,
         "volume_weight_kg": volumetric,
         "rate_eur_per_kg": rate_eur_per_kg,
+        "sell_eur": round(chargeable * rate_eur_per_kg, 2),
     }
