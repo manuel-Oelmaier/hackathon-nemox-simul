@@ -1,0 +1,34 @@
+# Tests run on pull requests, including drafts. This workflow does not merge.
+# Deploy runs only after a push to main, which is a human merge.
+
+name: ci
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run the draft tests
+        run: python -m unittest quoting.test_air_weight
+
+  deploy:
+    name: deploy
+    needs: tests
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Release gate
+        run: echo "Tests passed on main. Pull requests do not deploy."
