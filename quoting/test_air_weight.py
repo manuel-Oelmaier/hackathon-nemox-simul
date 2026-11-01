@@ -29,6 +29,11 @@ class AirWeightTests(unittest.TestCase):
         self.assertIsNone(volumetric)
         self.assertEqual(chargeable, 180)
 
+    def test_zero_volume_uses_actual(self) -> None:
+        chargeable, volumetric = chargeable_kg(180, 0)
+        self.assertEqual(volumetric, 0.0)
+        self.assertEqual(chargeable, 180)
+
     def test_volume_weight_formula(self) -> None:
         self.assertEqual(volume_weight_kg(4.2), 701.4)
 
