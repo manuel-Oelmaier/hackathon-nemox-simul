@@ -42,6 +42,19 @@ to it, so here the agent proposes at most one mutation per run, and the database
 from tests) and user verdicts; self scores never count. The curator holds the service key and runs
 the gate, applies CROSSOVER, deactivates nodes and adds edges with `pgraph`.
 
+## See what the graph holds
+
+The publishable key can read nodes, not episode rows. `tools/fish.py` draws those nodes in the
+memory-map layout: an activity strip, an overview grouped by node type, a radial map, and a history.
+
+    python3 tools/fish.py --domain bug_triage
+    python3 tools/fish.py --domain bug_triage --html /tmp/graph-fish.html
+    python3 tools/fish.py --domain bug_triage --serve
+
+Distance from the center is fitness, and a node fades when its visit count is zero, because the
+read API does not return a last-used time. A line is drawn only when an edge is supplied. Node
+size is the visit count.
+
 ## Tests
 
     python3 -m unittest discover -s tools

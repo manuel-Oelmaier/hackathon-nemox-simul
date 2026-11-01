@@ -23,6 +23,8 @@ jobs:
           python-version: "3.12"
       - name: Run the draft tests
         run: python -m unittest quoting.test_air_weight
+      - name: Run the graph tools tests
+        run: python -m unittest discover -s tools
 
   deploy:
     name: deploy
