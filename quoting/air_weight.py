@@ -1,7 +1,7 @@
 """Air chargeable weight for airport-to-airport quotes.
 
 Chargeable weight is the greater of actual weight and volume weight.
-The desk uses 167 kg per cubic metre (IATA 6,000 cm³/kg).
+The desk uses 167 kg per cubic metre (IATA 6,000 cm³/kg, stated as 167).
 Rating the sell rate on actual kilograms alone undercharges loose cartons.
 """
 
@@ -40,8 +40,8 @@ def rate_air_leg(
 ) -> dict[str, float | str | None]:
     """Rate one air leg on chargeable weight.
 
-    The per-kg sell rate comes from the rate sheet. This function chooses
-    the weight that rate is applied to.
+    The per-kg sell rate is supplied by the rate sheet. This function only
+    chooses the weight that rate is applied to.
     """
     chargeable, volumetric = chargeable_kg(actual_kg, cbm)
     return {

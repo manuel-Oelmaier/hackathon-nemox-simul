@@ -1,4 +1,4 @@
-# Tests run on pull requests, including drafts. This workflow does not merge.
+# Tests run on draft pull requests. This workflow does not merge.
 # Deploy runs only after a push to main, which is a human merge.
 
 name: ci
@@ -31,4 +31,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Release gate
-        run: echo "Tests passed on main. Pull requests do not deploy."
+        run: echo "Tests passed on main. Draft pull requests do not deploy."

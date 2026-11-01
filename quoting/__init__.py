@@ -1,1 +1,1 @@
-"""Airport-to-airport quoting calculations."""
+"""Quoting calculations used by the air desk."""
