@@ -2,7 +2,8 @@ Report
 
 Data sources:
 
-slack, report feedback button, agent traces logfire (data sources ), posthog video and user traces, git issues, 
+slack,
+ report feedback button, agent traces logfire (data sources -> agent eval,  ), posthog video and user traces, git issues, 
 
 
 Feedbackbutton -> 

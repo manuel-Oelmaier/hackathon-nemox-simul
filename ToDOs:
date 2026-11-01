@@ -1,4 +1,4 @@
--  outcreate issues on github or related,
+- outcreate issues on github or related,
 - sketch classifications 
 - 
 
@@ -7,8 +7,12 @@ Dream presentation:
 open slack,
 bug messages appear, (hook here ? - we need to base this off slack)
 
+actual fetches from dbs:
+posthog and logfire.
 Video or other descirption appears:
 
 we check the github repo:
 create draft PR,
 identify person and tag in slack ?
+
+
