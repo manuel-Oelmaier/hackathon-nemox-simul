@@ -1,19 +1,18 @@
-nemox has app.nemox.ai:
-customers use it -> currenlty recorded by posthog, 
-and analyised by posthog. & Claude ?
+# Nemox quoting
 
+Nemox runs app.nemox.ai. Customer use is recorded in PostHog and analyzed by PostHog and Claude.
 
+## Problem
 
+Devs do not know freight forwarding in enough detail to see why a customer is not using quoting.
 
-Key issue:
- devs lack knowledge of freightforwarding in detail, 
- unsure what is going wrong when Customer is not using their quoting ?
+Failure modes:
 
- Bad offer: e.g price, timing, route, Customer confused: bad UI,
+- Bad offer: price, timing, or route
+- Customer is confused by the UI
 
-Proposed Solutions: A/B tests over most of this ? 
+## Ideas
 
-
-Evals of Agent as well:
-
-Sentry ?
+- A/B tests across most of this
+- Evals for the agent
+- Sentry

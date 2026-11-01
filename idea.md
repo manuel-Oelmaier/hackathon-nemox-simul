@@ -1,32 +1,24 @@
-Report 
+# Automatic ticketing
 
-Data sources:
+Turn product feedback into a ticket: classify it, pick an owner, and either draft a fix or hand it to the right person.
 
-slack, report feedback button, agent traces logfire (data sources ), posthog video and user traces, git issues, 
+## Data sources
 
+- Slack
+- Report feedback button (date, user)
+- Agent traces (Logfire)
+- PostHog session video and user traces
+- Git issues
 
-Feedbackbutton -> 
+## Flow
 
-date, which User, 
+1. Classify the feedback. Tags: topic and severity.
+2. Find the best person from past and related git issues (RAG).
+3. Offer a solution PR draft, or the contact person.
+4. Assign that person.
+5. Notify them in Slack, with a description and a video of the change.
 
+## Open questions
 
-Combiniations of data:
-
-(Classification of feedback: -> Tags: Topics,Severity level )
-
-1. find best person based of past git issues, related issues  (RAG)?
-2. offer solution PR draft or contact person.
-3. assign Person
-4. notify via slack ( description video with change ?)
-
-
-
---- connect to eval idea ?
-
-
-
-
-
-
-Health monitioring ?
-
+- Connect this to the agent eval idea?
+- Health monitoring?
