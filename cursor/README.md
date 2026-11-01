@@ -55,6 +55,18 @@ Distance from the center is fitness, and a node fades when its visit count is ze
 read API does not return a last-used time. A line is drawn only when an edge is supplied. Node
 size is the visit count.
 
+`tools/school.py` draws one domain as a school of fish in one SVG image. Each node is a fish on a
+radial tree around a red leader fish: color is the node type, length grows with visits, and a gold
+glow shows fitness. Edges are curved currents, and children swim one ring further out than their
+parent. A card plots the episode scores, oldest first, with the best score so far.
+
+    python3 tools/school.py --domain bug_triage --out /tmp/school.svg
+
+The publishable key draws the nodes only. A key that may read the tables (the service key) also
+draws the edges and the episodes. Open the SVG in a browser. For a PNG, take a headless browser
+screenshot, for example `google-chrome --headless --window-size=1800,1200 --screenshot=school.png
+file:///tmp/school.svg`.
+
 ## Tests
 
     python3 -m unittest discover -s tools
